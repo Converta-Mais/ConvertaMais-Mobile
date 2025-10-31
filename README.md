@@ -31,10 +31,13 @@ Clonar o repositório
 git clone https://github.com/seu-usuario/converta-mais-mobile.git
 
 Entrar na pasta
-cd converta-mais-mobile
+
+- cd converta-mais-mobile
 
 Instalar dependências
-npm install
+
+- npm install
 
 Iniciar o Expo
-npx expo start
+
+- npx expo start
