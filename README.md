@@ -31,7 +31,6 @@ Versão mobile do app **Converta Mais** desenvolvida em React Native com Expo.
 
 git clone https://github.com/seu-usuario/converta-mais-mobile.git
 
-
 #### Entre na pasta:
 
 cd converta-mais-mobile
@@ -39,7 +38,6 @@ cd converta-mais-mobile
 #### Instale as dependências:
 
 npm install
-
 
 #### Inicie o Expo:
 
