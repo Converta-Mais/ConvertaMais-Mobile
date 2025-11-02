@@ -11,7 +11,7 @@ import {
   Alert,
   ActivityIndicator,
   ScrollView,
-  Image, // ✅ Importar Image
+  Image,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
@@ -44,13 +44,10 @@ export default function LoginScreen({ navigation }: Props) {
     setIsLoading(true);
 
     try {
-      await signIn({
-        email: email.toLowerCase().trim(),
-        senha,
-      });
+      await signIn(email.trim().toLowerCase(), senha);
+      // Navegação para Home ou outra tela protegida ocorre no contexto via estado user
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Erro ao fazer login. Tente novamente.';
-      Alert.alert('Erro', message);
+      Alert.alert('Erro', error.message || 'Erro ao fazer login. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -65,10 +62,9 @@ export default function LoginScreen({ navigation }: Props) {
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
-        {/* Logo com Imagem ✅ */}
         <View style={styles.logoContainer}>
           <View style={styles.logoBackground}>
-            <Image 
+            <Image
               source={require('../../../assets/images/logo.png')}
               style={styles.logoImage}
               resizeMode="contain"
@@ -76,7 +72,6 @@ export default function LoginScreen({ navigation }: Props) {
           </View>
         </View>
 
-        {/* Tabs Login/Registro */}
         <View style={styles.tabContainer}>
           <Text style={styles.tabActive}>Login</Text>
           <TouchableOpacity
@@ -87,7 +82,6 @@ export default function LoginScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
 
-        {/* Formulário */}
         <View style={styles.formContainer}>
           <Text style={styles.label}>E-mail</Text>
           <TextInput
