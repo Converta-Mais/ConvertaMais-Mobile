@@ -1,43 +1,86 @@
-# Converta Mais Mobile 📱
+Converta Mais Mobile 📱
 
-Versão mobile do app **Converta Mais** desenvolvida em **React Native** com **Expo**.
+Versão mobile do app Converta Mais desenvolvida em React Native﻿ com Expo﻿
 
-## 📋 Funcionalidades
+.
+📋 Funcionalidades
 
-- ✅ Autenticação com JWT
-- ✅ Listagem de campanhas
-- ✅ Design responsivo
+    ✅ Autenticação com Firebase Authentication﻿
 
-## 🛠️ Tecnologias Utilizadas
+    ⏳ Listagem de campanhas (em desenvolvimento)
 
-- **React Native** com Expo
-- **TypeScript** para tipagem segura
-- **Axios** para requisições HTTP
-- **Expo Router** (navegação)
-- **AsyncStorage** para armazenamento local
-- **react-native-svg** para ícones SVG
+    ✅ Design responsivo
 
-## 🚀 Como Rodar
+🛠️ Tecnologias Utilizadas
 
-### Pré-requisitos
+    React Native﻿ com Expo﻿
 
-- Node.js instalado
-- Expo CLI: `npm install -g expo-cli`
-- Expo Go instalado no seu celular (opcional)
+TypeScript﻿
 
-### Instalação
+para tipagem segura
 
-Clonar o repositório
+Expo Router﻿
+
+(para navegação)
+
+AsyncStorage﻿
+
+para armazenamento local
+
+react-native-svg﻿
+
+para ícones SVG
+
+Firebase﻿
+
+    para autenticação e backend
+
+🚀 Como Rodar
+Pré-requisitos
+
+    Node.js﻿
+
+instalado
+
+Expo CLI﻿
+
+: npm install -g expo-cli
+
+Expo Go﻿
+
+    instalado no seu celular (opcional)
+
+Instalação
+
+Clone o repositório:
+
+bash
 git clone https://github.com/seu-usuario/converta-mais-mobile.git
 
-Entrar na pasta
+Entre na pasta:
 
-- cd converta-mais-mobile
+bash
+cd converta-mais-mobile
 
-Instalar dependências
+Instale as dependências:
 
-- npm install
+bash
+npm install
 
-Iniciar o Expo
+Inicie o Expo:
 
-- npx expo start
+bash
+npx expo start
+
+🔧 Configuração Firebase
+
+    Edite o arquivo src/services/firebase.ts para incluir suas credenciais Firebase.
+
+    Importante: não use Firebase Analytics, pois ele não é suportado no React Native e foi removido do projeto.
+
+📌 Observações
+
+    O app usa Firebase Authentication﻿ para login e registro, com persistência via AsyncStorage﻿.
+
+A navegação entre telas usa o React Navigation Native Stack﻿
+com controle baseado no estado de autenticação do usuário no contexto.
