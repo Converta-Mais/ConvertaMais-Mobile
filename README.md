@@ -60,8 +60,5 @@ npx expo start
 ---
 
 Para mais detalhes sobre as funções e configurações, consulte os comentários nos arquivos fonte do projeto.
-
-Obrigado por usar o **Converta Mais Mobile**!
-
-Clone o repositório:
-
+  
+Obrigado por usar o **Converta Mais Mobile**!    
