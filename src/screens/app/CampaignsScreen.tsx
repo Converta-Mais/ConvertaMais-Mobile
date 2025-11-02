@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
-import { campaignService } from '../../services/api';
+import { campaignService } from '../../services/firebase';
 import { Campaign } from '../../types';
 import { COLORS } from '../../utils/constants';
 

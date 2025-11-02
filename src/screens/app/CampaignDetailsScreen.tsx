@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { campaignService } from '../../services/api';
+import { campaignService } from '../../services/firebase';
 import { Campaign } from '../../types';
 import { COLORS } from '../../utils/constants';
 import { AppStackParamList } from '../../navigation/AppStack';

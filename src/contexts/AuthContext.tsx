@@ -1,96 +1,78 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authService } from '../services/api';
-import { User, LoginCredentials, RegisterData } from '../types';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  User as FirebaseUser 
+} from 'firebase/auth';
+import { auth } from '../services/firebase'; // seu arquivo firebase.ts configurado
+
 
 interface AuthContextData {
-  user: User | null;
+  user: FirebaseUser | null;
   loading: boolean;
-  signIn: (credentials: LoginCredentials) => Promise<void>;
-  signUp: (data: RegisterData) => Promise<void>;
+  signIn: (email: string, senha: string) => Promise<void>;
+  signUp: (email: string, senha: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadStoredData();
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        await AsyncStorage.setItem('userData', JSON.stringify(firebaseUser));
+      } else {
+        setUser(null);
+        await AsyncStorage.removeItem('userData');
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const loadStoredData = async () => {
+  const signIn = async (email: string, senha: string) => {
+    setLoading(true);
     try {
-      const storedUser = await AsyncStorage.getItem('userData');
-      const storedToken = await AsyncStorage.getItem('userToken');
-
-      if (storedUser && storedToken) {
-        setUser(JSON.parse(storedUser));
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      setUser(userCredential.user);
+      await AsyncStorage.setItem('userData', JSON.stringify(userCredential.user));
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  const signIn = async (credentials: LoginCredentials) => {
+  const signUp = async (email: string, senha: string) => {
+    setLoading(true);
     try {
-      console.log('🔐 Iniciando login com:', credentials.email);
-      const response = await authService.login(credentials);
-      
-      console.log('✅ Login bem-sucedido!');
-      await AsyncStorage.setItem('userToken', response.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
-      
-      setUser(response.user);
-    } catch (error: any) {
-      console.error('❌ Erro no login:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-        url: error.config?.url,
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, senha);
+      setUser(userCredential.user);
+      await AsyncStorage.setItem('userData', JSON.stringify(userCredential.user));
+    } catch (error) {
       throw error;
-    }
-  };
-
-  const signUp = async (data: RegisterData) => {
-    try {
-      console.log('📝 Iniciando registro com:', {
-        nome: data.nome,
-        email: data.email,
-        telefone: data.telefone || 'não informado',
-      });
-
-      const response = await authService.register(data);
-      
-      console.log('✅ Registro bem-sucedido!');
-      await AsyncStorage.setItem('userToken', response.token);
-      await AsyncStorage.setItem('userData', JSON.stringify(response.user));
-      
-      setUser(response.user);
-    } catch (error: any) {
-      console.error('❌ Erro no registro:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-        url: error.config?.url,
-        fullError: error,
-      });
-      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
+    setLoading(true);
     try {
-      await authService.logout();
+      await auth.signOut();
       setUser(null);
+      await AsyncStorage.removeItem('userData');
     } catch (error) {
-      console.error('Erro ao fazer logout:', error);
+      throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
