@@ -1,86 +1,69 @@
-Converta Mais Mobile 📱
+# Converta Mais Mobile 📱
 
-Versão mobile do app Converta Mais desenvolvida em React Native﻿ com Expo﻿
+Versão mobile do app **Converta Mais** desenvolvida em React Native com Expo.
 
-.
-📋 Funcionalidades
+## 📋 Funcionalidades
 
-    ✅ Autenticação com Firebase Authentication﻿
+- ✅ Autenticação com Firebase Authentication
+- ⏳ Listagem de campanhas (em desenvolvimento)
+- ✅ Design responsivo
 
-    ⏳ Listagem de campanhas (em desenvolvimento)
+## 🛠️ Tecnologias Utilizadas
 
-    ✅ Design responsivo
+- React Native com Expo
+- TypeScript para tipagem segura
+- Expo Router (para navegação)
+- AsyncStorage para armazenamento local
+- react-native-svg para ícones SVG
+- Firebase para autenticação e backend
 
-🛠️ Tecnologias Utilizadas
+## 🚀 Como Rodar
 
-    React Native﻿ com Expo﻿
+### Pré-requisitos
 
-TypeScript﻿
+- Node.js instalado
+- Expo CLI: `npm install -g expo-cli`
+- Expo Go instalado no seu celular (opcional)
 
-para tipagem segura
+### Instalação
 
-Expo Router﻿
+#### Clone o repositório:
 
-(para navegação)
+git clone https://github.com/seu-usuario/converta-mais-mobile.git
 
-AsyncStorage﻿
 
-para armazenamento local
+#### Entre na pasta:
 
-react-native-svg﻿
+cd converta-mais-mobile
 
-para ícones SVG
+#### Instale as dependências:
 
-Firebase﻿
+npm install
 
-    para autenticação e backend
 
-🚀 Como Rodar
-Pré-requisitos
+#### Inicie o Expo:
 
-    Node.js﻿
+npx expo start
 
-instalado
+---
 
-Expo CLI﻿
+## 🔧 Configuração Firebase
 
-: npm install -g expo-cli
+- Edite o arquivo `src/services/firebase.ts` para incluir suas credenciais Firebase.
 
-Expo Go﻿
+---
 
-    instalado no seu celular (opcional)
+## 📌 Observações
 
-Instalação
+- O app usa Firebase Authentication para login e registro, com persistência via AsyncStorage.
+- Para salvar dados adicionais como nome e telefone, é necessário usar o Firestore (não implementado para simplificar).
+- A navegação entre telas usa o React Navigation Native Stack com controle baseado no estado de autenticação do usuário no contexto.
+
+---
+
+Para mais detalhes sobre as funções e configurações, consulte os comentários nos arquivos fonte do projeto.
+
+Obrigado por usar o **Converta Mais Mobile**!
 
 Clone o repositório:
 
-bash
-git clone https://github.com/seu-usuario/converta-mais-mobile.git
-
-Entre na pasta:
-
-bash
-cd converta-mais-mobile
-
-Instale as dependências:
-
-bash
-npm install
-
-Inicie o Expo:
-
-bash
-npx expo start
-
-🔧 Configuração Firebase
-
-    Edite o arquivo src/services/firebase.ts para incluir suas credenciais Firebase.
-
-    Importante: não use Firebase Analytics, pois ele não é suportado no React Native e foi removido do projeto.
-
-📌 Observações
-
-    O app usa Firebase Authentication﻿ para login e registro, com persistência via AsyncStorage﻿.
-
-A navegação entre telas usa o React Navigation Native Stack﻿
-com controle baseado no estado de autenticação do usuário no contexto.
