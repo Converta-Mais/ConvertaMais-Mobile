@@ -9,16 +9,18 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
-  Image,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../contexts/AuthContext';
-import { campaignService } from '../../services/firebase';
-import { Campaign } from '../../types';
+import { campaignService } from '../../services/campaignService';
+import { Campaign } from '../../types/types';
 import { COLORS } from '../../utils/constants';
+import { AppStackParamList } from '../../navigation/AppStack';
 
-
-type CampaignsScreenNavigationProp = NativeStackNavigationProp<any, 'Campaigns'>;
+type CampaignsScreenNavigationProp = NativeStackNavigationProp<
+  AppStackParamList,
+  'Campaigns'
+>;
 
 interface Props {
   navigation: CampaignsScreenNavigationProp;
@@ -30,7 +32,6 @@ export default function CampaignsScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Buscar campanhas ao carregar a tela
   useEffect(() => {
     fetchCampaigns();
   }, []);
@@ -51,19 +52,16 @@ export default function CampaignsScreen({ navigation }: Props) {
     }
   };
 
-  // Pull to refresh
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await fetchCampaigns();
     setRefreshing(false);
   }, []);
 
-  // Navegar para detalhes da campanha
   const handleCampaignPress = (campaign: Campaign) => {
     navigation.navigate('CampaignDetails', { campaignId: campaign._id });
   };
 
-  // Renderizar cada item da campanha
   const renderCampaignItem = ({ item }: { item: Campaign }) => (
     <TouchableOpacity
       style={styles.campaignButton}
@@ -71,39 +69,33 @@ export default function CampaignsScreen({ navigation }: Props) {
       activeOpacity={0.8}
     >
       <Text style={styles.campaignButtonText}>{item.nome}</Text>
+      <Text style={styles.campaignStatus}>{item.status}</Text>
     </TouchableOpacity>
   );
 
-  // Obter saudação baseada na hora do dia
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Bom dia';
-    if (hour < 18) return 'Boa tarde';
-    return 'Boa noite';
-  };
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Carregando campanhas...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Header com Logo e Saudação */}
+      {/* Header */}
       <View style={styles.header}>
-        <Image width={50} height={50} />
-        <View style={styles.greetingContainer}>
-          <Text style={styles.greetingText}>
-            {getGreeting()}, {user?.nome.split(' ')[0]}! 👋
-          </Text>
-        </View>
+        <Text style={styles.greetingText}>
+          Olá, {user?.displayName || 'Usuário'}! 👋
+        </Text>
       </View>
 
       {/* Título */}
       <Text style={styles.title}>Campanhas ativas:</Text>
 
       {/* Lista de Campanhas */}
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Carregando campanhas...</Text>
-        </View>
-      ) : campaigns.length === 0 ? (
+      {campaigns.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhuma campanha encontrada</Text>
           <Text style={styles.emptySubtext}>
@@ -148,9 +140,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  greetingContainer: {
-    marginTop: 15,
-  },
   greetingText: {
     fontSize: 18,
     color: COLORS.text,
@@ -172,7 +161,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 12,
     marginBottom: 15,
-    alignItems: 'center',
     shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -184,10 +172,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: COLORS.black,
   },
+  campaignStatus: {
+    fontSize: 12,
+    color: COLORS.black,
+    marginTop: 4,
+    opacity: 0.7,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.background,
   },
   loadingText: {
     marginTop: 10,
