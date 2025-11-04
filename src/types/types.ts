@@ -21,15 +21,3 @@ export interface RegisterData {
   senha: string;
   telefone?: string;
 }
-
-export interface Campaign {
-  _id: string;
-  nome: string;
-  descricao?: string;
-  status: 'ativa' | 'inativa' | 'finalizada';
-  dataInicio: string;
-  dataFim?: string;
-  totalLeads?: number;
-  createdAt: string;
-  updatedAt: string;
-}

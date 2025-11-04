@@ -1,4 +1,3 @@
-// src/screens/auth/RegisterScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -30,22 +29,56 @@ export default function RegisterScreen({ navigation }: Props) {
   const [telefone, setTelefone] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmarSenha, setMostrarConfirmarSenha] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signUp } = useAuth();
 
+  const validarEmail = (email: string): boolean => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  const validarSenha = (senha: string): { valida: boolean; mensagem?: string } => {
+    if (senha.length < 8) {
+      return { valida: false, mensagem: 'A senha deve ter no mínimo 8 caracteres' };
+    }
+    if (!/[A-Z]/.test(senha)) {
+      return { valida: false, mensagem: 'Senha deve conter ao menos uma letra maiúscula' };
+    }
+    if (!/[0-9]/.test(senha)) {
+      return { valida: false, mensagem: 'Senha deve conter ao menos um número' };
+    }
+    return { valida: true };
+  };
+
+  const formatarTelefone = (text: string): string => {
+    const numeros = text.replace(/\D/g, '');
+    if (numeros.length <= 10) {
+      return numeros.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    }
+    return numeros.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+  };
+
+  const handleTelefoneChange = (text: string) => {
+    setTelefone(formatarTelefone(text));
+  };
+
   const handleRegister = async () => {
-    if (!nome || !email || !senha || !confirmarSenha) {
+    // Validações
+    if (!nome.trim() || !email.trim() || !senha || !confirmarSenha) {
       Alert.alert('Atenção', 'Preencha todos os campos obrigatórios');
       return;
     }
 
-    if (!email.includes('@')) {
+    if (!validarEmail(email)) {
       Alert.alert('Atenção', 'Digite um e-mail válido');
       return;
     }
 
-    if (senha.length < 6) {
-      Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres');
+    const validacaoSenha = validarSenha(senha);
+    if (!validacaoSenha.valida) {
+      Alert.alert('Atenção', validacaoSenha.mensagem || 'Senha inválida');
       return;
     }
 
@@ -57,10 +90,10 @@ export default function RegisterScreen({ navigation }: Props) {
     setIsLoading(true);
 
     try {
-      // Passa somente email e senha para signUp do contexto Firebase
       await signUp(email.trim().toLowerCase(), senha);
-      Alert.alert('Sucesso', 'Conta criada com sucesso!');
-      navigation.navigate('Login');
+      Alert.alert('Sucesso', 'Conta criada com sucesso!', [
+        { text: 'OK', onPress: () => navigation.navigate('Login') }
+      ]);
     } catch (error: any) {
       Alert.alert('Erro', error.message || 'Erro ao criar conta. Tente novamente.');
     } finally {
@@ -95,7 +128,7 @@ export default function RegisterScreen({ navigation }: Props) {
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Nome Completo</Text>
+          <Text style={styles.label}>Nome Completo *</Text>
           <TextInput
             style={styles.input}
             placeholder="Seu nome"
@@ -104,9 +137,12 @@ export default function RegisterScreen({ navigation }: Props) {
             onChangeText={setNome}
             autoCapitalize="words"
             editable={!isLoading}
+            accessibilityLabel="Campo de nome completo"
+            textContentType="name"
+            autoComplete="name"
           />
 
-          <Text style={styles.label}>E-mail</Text>
+          <Text style={styles.label}>E-mail *</Text>
           <TextInput
             style={styles.input}
             placeholder="seu@exemplo.com"
@@ -117,6 +153,9 @@ export default function RegisterScreen({ navigation }: Props) {
             autoCapitalize="none"
             autoCorrect={false}
             editable={!isLoading}
+            accessibilityLabel="Campo de e-mail"
+            textContentType="emailAddress"
+            autoComplete="email"
           />
 
           <Text style={styles.label}>Telefone (opcional)</Text>
@@ -125,38 +164,67 @@ export default function RegisterScreen({ navigation }: Props) {
             placeholder="(00) 00000-0000"
             placeholderTextColor={COLORS.textSecondary}
             value={telefone}
-            onChangeText={setTelefone}
+            onChangeText={handleTelefoneChange}
             keyboardType="phone-pad"
             editable={!isLoading}
+            maxLength={15}
+            textContentType="telephoneNumber"
+            autoComplete="tel"
           />
 
-          <Text style={styles.label}>Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Mínimo 6 caracteres"
-            placeholderTextColor={COLORS.textSecondary}
-            value={senha}
-            onChangeText={setSenha}
-            secureTextEntry
-            editable={!isLoading}
-          />
+          <Text style={styles.label}>Senha *</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputWithIcon}
+              placeholder="Mínimo 8 caracteres"
+              placeholderTextColor={COLORS.textSecondary}
+              value={senha}
+              onChangeText={setSenha}
+              secureTextEntry={!mostrarSenha}
+              editable={!isLoading}
+              textContentType="newPassword"
+              autoComplete="password-new"
+            />
+            <TouchableOpacity
+              onPress={() => setMostrarSenha(!mostrarSenha)}
+              style={styles.eyeIcon}
+              disabled={isLoading}
+            >
+              <Text style={styles.eyeText}>{mostrarSenha ? '👁️' : '👁️‍🗨️'}</Text>
+            </TouchableOpacity>
+          </View>
 
-          <Text style={styles.label}>Confirmar Senha</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite novamente"
-            placeholderTextColor={COLORS.textSecondary}
-            value={confirmarSenha}
-            onChangeText={setConfirmarSenha}
-            secureTextEntry
-            editable={!isLoading}
-            onSubmitEditing={handleRegister}
-          />
+          <Text style={styles.label}>Confirmar Senha *</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputWithIcon}
+              placeholder="Digite novamente"
+              placeholderTextColor={COLORS.textSecondary}
+              value={confirmarSenha}
+              onChangeText={setConfirmarSenha}
+              secureTextEntry={!mostrarConfirmarSenha}
+              editable={!isLoading}
+              onSubmitEditing={handleRegister}
+              textContentType="newPassword"
+              autoComplete="password-new"
+            />
+            <TouchableOpacity
+              onPress={() => setMostrarConfirmarSenha(!mostrarConfirmarSenha)}
+              style={styles.eyeIcon}
+              disabled={isLoading}
+            >
+              <Text style={styles.eyeText}>{mostrarConfirmarSenha ? '👁️' : '👁️‍🗨️'}</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+            style={[
+              styles.button,
+              (isLoading || !nome || !email || !senha || !confirmarSenha) && styles.buttonDisabled
+            ]}
             onPress={handleRegister}
-            disabled={isLoading}
+            disabled={isLoading || !nome || !email || !senha || !confirmarSenha}
+            activeOpacity={0.8}
           >
             {isLoading ? (
               <ActivityIndicator color={COLORS.black} />
@@ -170,7 +238,6 @@ export default function RegisterScreen({ navigation }: Props) {
   );
 }
 
-// Seu StyleSheet permanece o mesmo (omitido aqui para brevidade)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -242,6 +309,29 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
+  inputContainer: {
+    position: 'relative',
+    marginBottom: 20,
+  },
+  inputWithIcon: {
+    backgroundColor: COLORS.cardBackground,
+    borderRadius: 10,
+    padding: 16,
+    paddingRight: 50,
+    fontSize: 16,
+    color: COLORS.text,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: 10,
+    padding: 4,
+  },
+  eyeText: {
+    fontSize: 20,
+  },
   button: {
     backgroundColor: COLORS.primary,
     borderRadius: 10,
@@ -252,7 +342,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonDisabled: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
   buttonText: {
     fontSize: 17,
