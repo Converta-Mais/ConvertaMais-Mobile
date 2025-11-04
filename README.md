@@ -14,7 +14,6 @@ Versão mobile do app **Converta Mais** desenvolvida em React Native com Expo.
 - TypeScript para tipagem segura
 - Expo Router (para navegação)
 - AsyncStorage para armazenamento local
-- react-native-svg para ícones SVG
 - Firebase para autenticação e backend
 
 ## 🚀 Como Rodar
